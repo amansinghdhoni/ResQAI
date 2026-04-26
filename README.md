@@ -114,7 +114,7 @@ ResQAi is built with the vision of creating a world where:
     </td>
     <td align="center">
       <a href="https://www.linkedin.com/in/aman-singh35/" target="_blank">
-        <img src="https://media.licdn.com/dms/image/v2/D5603AQGkdk2Uv5Ps4A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1732869693817?e=1778716800&v=beta&t=r2UaKI495PNqAj_JoiIai0O3RjV05tqRjcei5M27af8" width="200px;" alt="Aman Singh"/>
+        <img src="https://media.licdn.com/dms/image/v2/D5603AQGkdk2Uv5Ps4A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1732869693817?e=1778716800&v=beta&t=r2UaKI495PNqAj_JoiIai0O3RjV05tqRjcei5M27af8" width="200px;" alt="Aman Singh" />
         <br />
         <sub><b>Aman Singh</b></sub>
       </a>
@@ -128,7 +128,7 @@ ResQAi is built with the vision of creating a world where:
     </td>
     <td align="center">
       <a href="https://www.linkedin.com/in/isha-mande-4988a7391/" target="_blank">
-        <img src="https://avatars.githubusercontent.com/u/4?v=4" width="200px;" alt="Isha Mande"/>
+        <img src="https://www.vecteezy.com/vector-art/19552573-illustration-of-duck-animals-vector-bird-drawing" width="200px;" alt="Isha Mande"/>
         <br />
         <sub><b>Isha Mande</b></sub>
       </a>
