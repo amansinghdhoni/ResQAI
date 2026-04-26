@@ -128,7 +128,7 @@ ResQAi is built with the vision of creating a world where:
     </td>
     <td align="center">
       <a href="https://www.linkedin.com/in/isha-mande-4988a7391/" target="_blank">
-        <img src="https://www.vecteezy.com/vector-art/19552573-illustration-of-duck-animals-vector-bird-drawing" width="200px;" alt="Isha Mande"/>
+        <img src="https://img.freepik.com/free-vector/cute-duck-cartoon-vector-icon-illustration-animal-nature-icon-isolated-flat-vector_138676-11964.jpg?semt=ais_hybrid&w=740&q=80" width="200px;" alt="Isha Mande"/>
         <br />
         <sub><b>Isha Mande</b></sub>
       </a>
