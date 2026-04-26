@@ -67,16 +67,19 @@ export default function AdminDashboard() {
     { id: 'volunteers', label: 'Volunteers', icon: <Users size={15} /> },
   ];
 
-  if (authLoading) return <div className="app-container" style={{ justifyContent: 'center', alignItems: 'center' }}><span className="spinner" style={{ width: 32, height: 32, borderWidth: 3 }} /></div>;
+  if (authLoading) return <div className="app-layout" style={{ justifyContent: 'center', alignItems: 'center' }}><span className="spinner" style={{ width: 32, height: 32, borderWidth: 3 }} /></div>;
 
   return (
-    <div className="app-container">
+    <div className="app-layout">
       <FloatingAlert message={floatingAlert} onClose={() => setFloatingAlert(null)} />
-      <Navbar />
-      <div style={{ padding: '1rem 1.25rem' }}>
-        <TabBar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
-      </div>
-      <main style={{ padding: '0 1.25rem 1.25rem', flex: 1, overflow: 'auto' }}>
+
+      {/* Left Sidebar */}
+      <TabBar tabs={tabs} activeTab={activeTab} onTabChange={setActiveTab} />
+
+      {/* Main Content Area */}
+      <div className="app-main-wrapper">
+        <Navbar />
+        <main className="app-content">
 
         {/* OVERVIEW */}
         {activeTab === 'overview' && (
@@ -97,14 +100,14 @@ export default function AdminDashboard() {
 
         {/* COMMAND MAP */}
         {activeTab === 'map' && (
-          <div style={{ height: 'calc(100vh - 180px)' }} className="fade-in">
+          <div style={{ height: 'calc(100vh - 130px)' }} className="fade-in">
             <MapView incidents={incidents} interactive={false} userPosition={userPosition} onLocate={locateUser} />
           </div>
         )}
 
         {/* INCIDENTS */}
         {activeTab === 'incidents' && (
-          <div className="fade-in" style={{ display: 'flex', gap: '1.25rem', height: 'calc(100vh - 180px)' }}>
+          <div className="fade-in" style={{ display: 'flex', gap: '1.25rem', height: 'calc(100vh - 130px)' }}>
             <div style={{ width: 340, minWidth: 340, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
               <h4 style={{ fontSize: '0.9rem', marginBottom: '0.5rem' }}>All Incidents ({incidents.length})</h4>
               {incidents.map(inc => (
@@ -200,6 +203,7 @@ export default function AdminDashboard() {
           </div>
         )}
       </main>
+      </div>
     </div>
   );
 }

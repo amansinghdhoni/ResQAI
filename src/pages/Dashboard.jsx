@@ -142,7 +142,7 @@ export default function Dashboard() {
   };
 
   if (authLoading || !userData) return (
-    <div className="app-container" style={{ justifyContent: 'center', alignItems: 'center' }}>
+    <div className="app-layout" style={{ justifyContent: 'center', alignItems: 'center' }}>
       <span className="spinner" style={{ width: 32, height: 32, borderWidth: 3 }} />
     </div>
   );
@@ -172,17 +172,17 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="app-container">
+    <div className="app-layout">
       <FloatingAlert message={floatingAlert} onClose={() => setFloatingAlert(null)} />
-      <Navbar />
-      <div style={{ padding: '1rem 1.25rem' }}>
-        <TabBar tabs={tabConfigs[role] || tabConfigs.citizen} activeTab={activeTab} onTabChange={setActiveTab} />
-      </div>
-      <main className="main-content" style={{ padding: '0 1.25rem 1.25rem', gap: '1.25rem', height: 'calc(100vh - 140px)' }}>
+      <TabBar tabs={tabConfigs[role] || tabConfigs.citizen} activeTab={activeTab} onTabChange={setActiveTab} />
+      
+      <div className="app-main-wrapper">
+        <Navbar />
+        <main className="app-content">
 
         {/* ===== MAP TAB ===== */}
         {activeTab === 'map' && (
-          <div style={{ display: 'flex', gap: '1.25rem', height: '200%', width: '100%' }}>
+          <div style={{ display: 'flex', gap: '1.25rem', height: 'calc(100vh - 130px)', width: '100%' }}>
             <aside style={{ width: 280, minWidth: 280, display: 'flex', flexDirection: 'column', gap: '0.75rem', overflowY: 'auto' }}>
               {role === 'citizen' && (
                 <div className="card fade-in">
@@ -350,6 +350,7 @@ export default function Dashboard() {
           </div>
         )}
       </main>
+      </div>
 
       {/* ===== REPORT MODAL ===== */}
       <Modal isOpen={showReportModal} onClose={() => setShowReportModal(false)} title="🚨 Report Emergency">

@@ -1,30 +1,29 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents, useMap, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import { Crosshair } from 'lucide-react';
-
-// Fix default markers
 import icon from 'leaflet/dist/images/marker-icon.png';
 import iconShadow from 'leaflet/dist/images/marker-shadow.png';
+
 L.Marker.prototype.options.icon = L.icon({ iconUrl: icon, shadowUrl: iconShadow, iconSize: [25, 41], iconAnchor: [12, 41] });
 
 const getIcon = (severity) => {
   let color = '#10B981';
-  if (severity > 75) color = '#EF4444';
+  if (severity > 75) color = '#F43F5E';
   else if (severity > 50) color = '#F97316';
   else if (severity > 25) color = '#F59E0B';
   const pulse = severity > 75 ? 'animation:markerPulse 2s infinite;' : '';
   return L.divIcon({
     className: 'custom-icon',
-    html: `<div style="background:${color};width:18px;height:18px;border-radius:50%;border:3px solid rgba(255,255,255,0.9);box-shadow:0 2px 8px rgba(0,0,0,0.4);${pulse}"></div>`,
-    iconSize: [18, 18], iconAnchor: [9, 9],
+    html: `<div style="background:${color};width:20px;height:20px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.25);${pulse}"></div>`,
+    iconSize: [20, 20], iconAnchor: [10, 10],
   });
 };
 
 const userIcon = L.divIcon({
   className: 'custom-icon',
-  html: `<div style="background:#3B82F6;width:14px;height:14px;border-radius:50%;border:3px solid white;box-shadow:0 0 0 4px rgba(59,130,246,0.3),0 2px 8px rgba(0,0,0,0.3);"></div>`,
-  iconSize: [14, 14], iconAnchor: [7, 7],
+  html: `<div style="background:#2563EB;width:16px;height:16px;border-radius:50%;border:3px solid white;box-shadow:0 2px 8px rgba(37,99,235,0.4);"></div>`,
+  iconSize: [16, 16], iconAnchor: [8, 8],
 });
 
 function MapEvents({ onMapClick }) {
@@ -34,22 +33,21 @@ function MapEvents({ onMapClick }) {
 
 function LocateControl({ userPos }) {
   const map = useMap();
-  useEffect(() => {
-    if (userPos) map.flyTo(userPos, 13, { duration: 1.5 });
-  }, [userPos, map]);
+  useEffect(() => { if (userPos) map.flyTo(userPos, 13, { duration: 1.5 }); }, [userPos, map]);
   return null;
 }
 
-export default function MapView({ incidents = [], onMapClick, interactive = false, userPosition, onLocate, selectedIncident }) {
+export default function MapView({ incidents = [], onMapClick, interactive = false, userPosition, onLocate }) {
   const defaultCenter = [20.5937, 78.9629];
   const center = userPosition || defaultCenter;
 
   return (
     <div className="map-wrapper">
-      <MapContainer center={center} zoom={userPosition ? 13 : 5} style={{ height: '100%', width: '100%', zIndex: 0 }} scrollWheelZoom={true}>
+      <MapContainer center={center} zoom={userPosition ? 13 : 5} style={{ height: '100%', width: '100%' }} scrollWheelZoom={true}>
+        {/* Bright Voyager tiles */}
         <TileLayer
           attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
         />
         {interactive && <MapEvents onMapClick={onMapClick} />}
         <LocateControl userPos={userPosition} />
@@ -57,9 +55,9 @@ export default function MapView({ incidents = [], onMapClick, interactive = fals
         {userPosition && (
           <>
             <Marker position={userPosition} icon={userIcon}>
-              <Popup><div style={{textAlign:'center'}}><strong>Your Location</strong></div></Popup>
+              <Popup><strong>Your Location</strong></Popup>
             </Marker>
-            <Circle center={userPosition} radius={500} pathOptions={{ color: '#3B82F6', fillColor: '#3B82F6', fillOpacity: 0.08, weight: 1 }} />
+            <Circle center={userPosition} radius={500} pathOptions={{ color: '#2563EB', fillColor: '#2563EB', fillOpacity: 0.08, weight: 1.5 }} />
           </>
         )}
 
@@ -68,17 +66,13 @@ export default function MapView({ incidents = [], onMapClick, interactive = fals
             <Popup>
               <div style={{ minWidth: 180 }}>
                 <h4 style={{ margin: '0 0 6px', fontSize: '0.95rem' }}>{inc.title}</h4>
-                <div style={{ fontSize: '0.78rem', color: '#9CA3AF', marginBottom: 6 }}>{inc.disasterType}</div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', marginBottom: 4 }}>
-                  <span>Severity</span><span style={{ fontWeight: 700, color: inc.severityScore > 75 ? '#EF4444' : inc.severityScore > 40 ? '#F59E0B' : '#10B981' }}>{inc.severityScore}%</span>
+                <div style={{ fontSize: '0.78rem', color: '#64748B', marginBottom: 6 }}>{inc.disasterType}</div>
+                <div style={{ fontWeight: 700, color: inc.severityScore > 75 ? '#F43F5E' : '#10B981', marginBottom: 6 }}>
+                  Severity: {inc.severityScore}%
                 </div>
-                <div style={{ width: '100%', height: 4, background: '#1F2937', borderRadius: 99, overflow: 'hidden', marginBottom: 6 }}>
-                  <div style={{ width: `${inc.severityScore}%`, height: '100%', borderRadius: 99, background: inc.severityScore > 75 ? '#EF4444' : inc.severityScore > 40 ? '#F59E0B' : '#10B981', transition: 'width 0.5s ease' }} />
+                <div style={{ fontSize: '0.75rem', color: '#475569' }}>
+                  📢 {inc.reportCount} reports • 🏢 {inc.assignedNGOs?.length || 0} NGOs
                 </div>
-                <div style={{ fontSize: '0.75rem', color: '#6B7280' }}>
-                  📢 {inc.reportCount} reports • 🏢 {inc.assignedNGOs?.length || 0} NGOs assigned
-                </div>
-                {inc.severityScore === 0 && <div style={{ marginTop: 6, color: '#06B6D4', fontWeight: 600, fontSize: '0.78rem' }}>✅ Resolved</div>}
               </div>
             </Popup>
           </Marker>
@@ -86,8 +80,8 @@ export default function MapView({ incidents = [], onMapClick, interactive = fals
       </MapContainer>
 
       {onLocate && (
-        <button className="map-locate-btn" onClick={onLocate} title="Go to my location">
-          <Crosshair size={20} />
+        <button className="map-locate-btn" onClick={onLocate} title="Locate me" style={{ position: 'absolute', bottom: 20, right: 20, zIndex: 999, padding: '10px', borderRadius: '50%', border: '1.5px solid var(--border)', background: 'white', boxShadow: '0 4px 12px rgba(0,0,0,0.1)', cursor: 'pointer', transition: 'var(--transition)' }}>
+          <Crosshair size={20} color="#2563EB" />
         </button>
       )}
     </div>
