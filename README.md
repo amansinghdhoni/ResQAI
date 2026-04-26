@@ -107,28 +107,28 @@ ResQAi is built with the vision of creating a world where:
   <tr>
     <td align="center">
       <a href="https://www.linkedin.com/in/varad-kanhere-744592326/" target="_blank">
-        <img src="https://media.licdn.com/dms/image/v2/D4E03AQHa-6NYqb-x7A/profile-displayphoto-shrink_800_800/B4EZUPBAPwG0Ac-/0/1739713677598?e=1778716800&v=beta&t=BDmnAyXeeD2psbCuiO8RbrQL4YJRUrKFNjWAZ6uar14" width="100px;" alt="Varad Kanhere"/>
+        <img src="https://media.licdn.com/dms/image/v2/D4E03AQHa-6NYqb-x7A/profile-displayphoto-shrink_800_800/B4EZUPBAPwG0Ac-/0/1739713677598?e=1778716800&v=beta&t=BDmnAyXeeD2psbCuiO8RbrQL4YJRUrKFNjWAZ6uar14" width="200px;" alt="Varad Kanhere"/>
         <br />
         <sub><b>Varad Kanhere</b></sub>
       </a>
     </td>
     <td align="center">
       <a href="https://www.linkedin.com/in/aman-singh35/" target="_blank">
-        <img src="https://media.licdn.com/dms/image/v2/D5603AQGkdk2Uv5Ps4A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1732869693817?e=1778716800&v=beta&t=r2UaKI495PNqAj_JoiIai0O3RjV05tqRjcei5M27af8" width="100px;" alt="Aman Singh"/>
+        <img src="https://media.licdn.com/dms/image/v2/D5603AQGkdk2Uv5Ps4A/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1732869693817?e=1778716800&v=beta&t=r2UaKI495PNqAj_JoiIai0O3RjV05tqRjcei5M27af8" width="200px;" alt="Aman Singh"/>
         <br />
         <sub><b>Aman Singh</b></sub>
       </a>
     </td>
     <td align="center">
       <a href="https://www.linkedin.com/in/aditya-londhe-43892527b/" target="_blank">
-        <img src="https://media.licdn.com/dms/image/v2/D5603AQEy9qHb2VZRSg/profile-displayphoto-crop_800_800/B56Zhmw63DH0AI-/0/1754070757515?e=1778716800&v=beta&t=4mQpulCdtbqcncCgLWowZHH9bVZ_hQj9gOjnMafUZdo" width="100px;" alt="Aditya Londhe"/>
+        <img src="https://media.licdn.com/dms/image/v2/D5603AQEy9qHb2VZRSg/profile-displayphoto-crop_800_800/B56Zhmw63DH0AI-/0/1754070757515?e=1778716800&v=beta&t=4mQpulCdtbqcncCgLWowZHH9bVZ_hQj9gOjnMafUZdo" width="200px;" alt="Aditya Londhe"/>
         <br />
         <sub><b>Aditya Londhe</b></sub>
       </a>
     </td>
     <td align="center">
       <a href="https://www.linkedin.com/in/isha-mande-4988a7391/" target="_blank">
-        <img src="https://avatars.githubusercontent.com/u/4?v=4" width="100px;" alt="Isha Mande"/>
+        <img src="https://avatars.githubusercontent.com/u/4?v=4" width="200px;" alt="Isha Mande"/>
         <br />
         <sub><b>Isha Mande</b></sub>
       </a>
