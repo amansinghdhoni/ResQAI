@@ -18,8 +18,8 @@ export default function TabBar({ tabs, activeTab, onTabChange }) {
             className={`nav-item ${activeTab === tab.id ? 'active' : ''}`}
             onClick={() => onTabChange(tab.id)}
           >
-            {tab.icon && <span style={{ display: 'flex', alignItems: 'center' }}>{tab.icon}</span>}
-            {tab.label}
+            {tab.icon && <span className="nav-icon">{tab.icon}</span>}
+            <span className="nav-label">{tab.label}</span>
           </button>
         ))}
       </nav>

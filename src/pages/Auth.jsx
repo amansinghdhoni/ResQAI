@@ -1,16 +1,47 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShieldCheck, AlertCircle } from 'lucide-react';
 import { auth, db } from '../firebase/config';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, onSnapshot, query, setDoc, where } from 'firebase/firestore';
 
 export default function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [role, setRole] = useState('citizen');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [ngoLocationLoading, setNgoLocationLoading] = useState(false);
+  const [ngoLocation, setNgoLocation] = useState(null);
+  const [availableNgos, setAvailableNgos] = useState([]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const ngosQuery = query(collection(db, 'users'), where('role', '==', 'ngo'));
+    const unsub = onSnapshot(ngosQuery, (snap) => {
+      setAvailableNgos(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
+    });
+
+    return () => unsub();
+  }, []);
+
+  const handleFetchNgoLocation = () => {
+    if (!navigator.geolocation) {
+      setError('Geolocation is not supported in this browser. Please enter latitude and longitude manually.');
+      return;
+    }
+    setNgoLocationLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setNgoLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setNgoLocationLoading(false);
+      },
+      () => {
+        setNgoLocationLoading(false);
+        setError('Unable to fetch location. Please allow location permission or enter coordinates manually.');
+      },
+      { enableHighAccuracy: true, timeout: 10000 }
+    );
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -32,6 +63,9 @@ export default function Auth() {
         }
       } else {
         const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const manualLat = Number(fd.get('ngolat'));
+        const manualLng = Number(fd.get('ngolng'));
+        const hasManualLocation = Number.isFinite(manualLat) && Number.isFinite(manualLng);
         const userData = {
           uid: cred.user.uid, email, role,
           name: fd.get('name'), phone: fd.get('phone') || '', city: fd.get('city') || '',
@@ -41,12 +75,26 @@ export default function Auth() {
           userData.ngoId = fd.get('ngoid');
           userData.ngoAddress = fd.get('ngoaddress') || '';
           userData.contactPerson = fd.get('contactperson') || '';
+          if (ngoLocation?.lat && ngoLocation?.lng) {
+            userData.location = { lat: ngoLocation.lat, lng: ngoLocation.lng };
+          } else if (hasManualLocation) {
+            userData.location = { lat: manualLat, lng: manualLng };
+          }
           userData.inventory = { food: 0, clothes: 0, supplies: 0, medical: 0 };
         }
         if (role === 'volunteer') {
+          const joinedNgoId = fd.get('joinedNgoId');
+          const joinedNgo = availableNgos.find((ngo) => ngo.id === joinedNgoId);
+          if (!joinedNgo) {
+            throw new Error('Please select a valid NGO to register as a volunteer.');
+          }
+
           userData.skills = fd.get('skills');
           userData.age = fd.get('age') || '';
           userData.availability = fd.get('availability') || 'Full-time';
+          userData.joinedNgoId = joinedNgo.id;
+          userData.joinedNgoName = joinedNgo.name || '';
+          userData.joinedNgoAt = new Date().toISOString();
         }
         await setDoc(doc(db, 'users', cred.user.uid), userData);
         navigate('/dashboard');
@@ -146,11 +194,48 @@ export default function Auth() {
                   <label>Contact Person</label>
                   <input type="text" name="contactperson" className="input-field" placeholder="Contact name" required />
                 </div>
+                <div className="input-group fade-in">
+                  <label>NGO Location (for nearest incident assignment)</label>
+                  <button type="button" className="btn btn-outline w-full" onClick={handleFetchNgoLocation} disabled={ngoLocationLoading}>
+                    {ngoLocationLoading ? <span className="spinner" style={{ width: 14, height: 14, borderWidth: 2 }} /> : 'Use Current Location'}
+                  </button>
+                  {ngoLocation && (
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 6 }}>
+                      Captured: {ngoLocation.lat.toFixed(5)}, {ngoLocation.lng.toFixed(5)}
+                    </p>
+                  )}
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <div className="input-group fade-in">
+                    <label>Latitude (optional)</label>
+                    <input type="number" step="any" name="ngolat" className="input-field" placeholder="19.0760" />
+                  </div>
+                  <div className="input-group fade-in">
+                    <label>Longitude (optional)</label>
+                    <input type="number" step="any" name="ngolng" className="input-field" placeholder="72.8777" />
+                  </div>
+                </div>
               </>
             )}
 
             {!isLogin && role === 'volunteer' && (
               <>
+                <div className="input-group fade-in">
+                  <label>Select NGO</label>
+                  <select name="joinedNgoId" className="input-field" required>
+                    <option value="">Choose NGO...</option>
+                    {availableNgos.map((ngo) => (
+                      <option key={ngo.id} value={ngo.id}>
+                        {ngo.name} ({ngo.city || 'N/A'})
+                      </option>
+                    ))}
+                  </select>
+                  {availableNgos.length === 0 && (
+                    <p style={{ fontSize: '0.75rem', color: 'var(--danger)', marginTop: 6 }}>
+                      No NGOs found yet. Please ask an NGO account to register first.
+                    </p>
+                  )}
+                </div>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
                   <div className="input-group fade-in">
                     <label>Skills / Expertise</label>
