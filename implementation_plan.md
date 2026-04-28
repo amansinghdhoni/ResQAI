@@ -1,289 +1,184 @@
-# ResQAI — Full Platform Implementation Plan
+# ResQAI Visual Redesign — Humanitarian Operations Theme
 
-## Current State Analysis
+## Goal
 
-The existing codebase has a basic Vite + React scaffold with:
-- ✅ Firebase Auth + Firestore config (working)
-- ✅ Basic Auth page (Login/Signup with role selection)
-- ✅ Basic Dashboard page (citizen/ngo/volunteer stubs)
-- ✅ Basic Admin Dashboard (incident list, NGO assignment)
-- ✅ Map component (Leaflet + OSM, severity-colored pins)
-- ✅ Design system foundation in `index.css` (colors, glass panels, cards, buttons)
+Redesign the entire ResQAI frontend from its current dark sci-fi glassmorphism aesthetic to a professional humanitarian operations theme inspired by UN situation reports, Red Cross field dashboards, and emergency briefing documents. **All existing Firebase logic, state management, routing, and feature functionality must remain 100% intact.**
 
-**What's missing or incomplete:**
-- ❌ No volunteer task management (assign/view/complete tasks)
-- ❌ No NGO self-assignment to incidents
-- ❌ No NGO inventory management (update food/clothes/supplies)
-- ❌ No volunteer-NGO linking
-- ❌ No donation tab/page
-- ❌ No phone/location fields in signup
-- ❌ Dashboard UI is functional but not premium — needs a significant visual upgrade
-- ❌ No tab-based navigation within dashboards
-- ❌ No notifications system beyond the floating banner
-- ❌ Admin can't see volunteer counts per NGO
-- ❌ No citizen "register as volunteer" flow
-- ❌ No proper auth state persistence (page refresh loses context)
-- ❌ SEO metadata missing
+---
+
+## Design System Summary
+
+| Token | Value | Purpose |
+|-------|-------|---------|
+| `--bg-page` | `#F5F2EB` | Warm off-white page background |
+| `--bg-card` | `#FFFFFF` | Pure white cards/panels |
+| `--bg-surface` | `#EEF0F3` | Cool light gray secondary surfaces |
+| `--primary` | `#0072BC` | UN Blue — primary actions, links |
+| `--danger` | `#CC0000` | Red Cross red — critical alerts |
+| `--success` | `#2A7A4B` | Forest green — resolved states |
+| `--warning` | `#C97A00` | Amber — moderate severity |
+| `--ink` | `#1A1A1A` | Ink black — headings |
+| `--text-body` | `#3D3D3D` | Body text |
+| `--text-muted` | `#6B6B6B` | Secondary labels |
+| `--border` | `#D4D0C8` | All card/panel borders (1px solid) |
+| Font Headings | IBM Plex Serif Bold | All titles and section headers |
+| Font UI | IBM Plex Sans | Body, labels, buttons |
+
+**No drop shadows on cards** — depth comes from `#FFFFFF` cards on `#F5F2EB` background.
+
+**Status strips**: Left 4px borders instead of badges — `#CC0000` critical, `#C97A00` moderate, `#2A7A4B` resolved, `#0072BC` assigned/active.
+
+**Buttons**: 44px height, 4px border-radius, tactile `box-shadow: 0 2px 0 rgba(0,0,0,0.08)`.
+
+---
+
+## Open Questions
+
+> [!IMPORTANT]
+> **Map tile style**: The spec calls for Leaflet with CartoDB Positron tiles. The current Map.jsx uses a different provider. I will update the tile URL. Confirm if this is acceptable.
+
+> [!NOTE]
+> **Google Fonts**: IBM Plex Serif + IBM Plex Sans will be imported from Google Fonts via the CSS `@import`. This requires internet access at runtime (already the case for Firebase).
+
+> [!NOTE]
+> **No admin registration** on the auth page — this is already the case (the current form has no admin option). No change needed there.
 
 ---
 
 ## Proposed Changes
 
-The entire platform will be rebuilt with a **premium dark-mode glassmorphism UI** while preserving the existing Firebase config and core data logic. Every file below is either new or significantly modified.
+### Design System Foundation
+
+#### [MODIFY] [index.css](file:///e:/ResQAI/src/index.css)
+
+Complete replacement of the CSS design system:
+- New `:root` variables (parchment, UN Blue, Red Cross Red, forest green, amber)
+- IBM Plex Serif + IBM Plex Sans Google Fonts import
+- Warm off-white `body` background with no dot grid
+- All card/stat-card styles: white background, 1px `#D4D0C8` border, no shadows
+- Sidebar/left-nav: white background, 1px right border, blue active strips
+- Buttons: 44px height, flat with bottom tactile shadow
+- Table row styles: 44px height, alternating rows
+- Severity bar: gradient `#CC0000 → #C97A00 → #2A7A4B`, animated 400ms
+- Floating alert: parchment background, 3px red top border strip
+- Auth page: centered layout (no hero/form split), card-based with underline tabs
+- Role badge: text labels with colored left strip or inline colored tag
+- All form fields: white fill, `#D4D0C8` border, focus ring in UN Blue
+- Leaflet popup override: white card with serif headers
+- Responsive: same structural breakpoints preserved
 
 ---
 
-### Design System — Complete Overhaul
+### Components
 
-#### [MODIFY] [index.css](file:///f:/ResQAI/src/index.css)
+#### [MODIFY] [TabBar.jsx](file:///e:/ResQAI/src/components/TabBar.jsx)
+- Sidebar stays 220px, white background, `1px solid #D4D0C8` right border
+- **ResQAI** wordmark in IBM Plex Serif Bold (no gradient)
+- "ADMIN" label for admin (red uppercase 11px) or role label in smaller text
+- Nav items: active state has **3px left blue border** + blue text (not glow/shadow)
+- Footer: `Powered by AI Intelligence` in 11px muted text
 
-Complete rewrite of the design system:
-- **Dark mode** with deep navy/charcoal backgrounds (`#0B1120`, `#111827`)
-- **Glassmorphism** cards with `backdrop-filter: blur()` and translucent borders
-- **Gradient accents**: Primary gradient `linear-gradient(135deg, #3B82F6, #8B5CF6)` (blue→violet)
-- **Severity color system**: Red→Orange→Yellow→Green spectrum
-- **Premium typography**: Inter font, proper scale
-- **Micro-animations**: Fade-ins, hover lifts, pulse effects, shimmer loading states
-- **Full responsive grid** utilities
-- **Tab navigation** styles
-- **Modal overlay** styles with blur backdrop
-- **Badge/pill** component styles
-- **Progress bar** styles for severity visualization
-- **Toast notification** animation system
-- **Sidebar** layout with collapsible sections
-- **Stat card** component with gradient borders
+#### [MODIFY] [Navbar.jsx](file:///e:/ResQAI/src/components/Navbar.jsx)
+- Header bar: white background, `1px solid #D4D0C8` bottom border
+- Left: ResQAI wordmark + page title in serif
+- Right: role badge + user name + logout button
+- Role-color top strip: 3px colored bar below header (blue=citizen, green=NGO, blue=volunteer)
 
----
+#### [MODIFY] [SeverityBar.jsx](file:///e:/ResQAI/src/components/SeverityBar.jsx)
+- Background: `#E5E3DC`
+- Fill gradient: `#CC0000` at 100% → `#C97A00` at 50% → `#2A7A4B` at 0%
+- Animated width transition `400ms ease`
+- Percentage label shown right-aligned above bar in 12px uppercase
 
-### Entry Point & SEO
+#### [MODIFY] [StatCard.jsx](file:///e:/ResQAI/src/components/StatCard.jsx)
+- White card, `1px solid #D4D0C8` border, no shadow
+- Serif bold 32px number value
+- 13px uppercase label
+- Delta indicator: small green/red arrow (optional, prop-based)
+- Remove gradient text effects
 
-#### [MODIFY] [index.html](file:///f:/ResQAI/index.html)
+#### [MODIFY] [FloatingAlert.jsx](file:///e:/ResQAI/src/components/FloatingAlert.jsx)
+- Full-width sticky bar (not floating bubble)
+- Parchment `#F5F2EB` background with `3px solid #CC0000` top border
+- Left: red warning icon + bold incident name + location
+- Right: dismiss X button
+- Multiple alerts stack (already single — no change to state logic)
 
-- Add proper `<title>`, meta description, Open Graph tags
-- Add Leaflet CSS CDN link
-- Add Google Fonts preconnect for Inter
-
----
-
-### Auth Context (New)
-
-#### [NEW] [AuthContext.jsx](file:///f:/ResQAI/src/contexts/AuthContext.jsx)
-
-- React Context + Provider that wraps the app
-- Listens to `onAuthStateChanged` globally
-- Fetches and caches the user's Firestore document (role, name, etc.)
-- Exposes `{ user, userData, loading, logout }` to all components
-- Eliminates duplicate auth listeners across pages
-
----
-
-### App Router
-
-#### [MODIFY] [App.jsx](file:///f:/ResQAI/src/App.jsx)
-
-- Wrap everything in `<AuthProvider>`
-- Add protected route logic (redirect to `/` if not logged in)
-- Add role-based routing guards (admin-only for `/admin`)
+#### [MODIFY] [Modal.jsx](file:///e:/ResQAI/src/components/Modal.jsx)
+- White card, max 540px, centered with `rgba(0,0,0,0.35)` backdrop (no blur)
+- Serif bold title
+- `1px solid #D4D0C8` horizontal rule below title
+- Action buttons right-aligned
+- Escape to close
 
 ---
 
-### Auth Page — Premium Redesign
+### Pages
 
-#### [MODIFY] [Auth.jsx](file:///f:/ResQAI/src/pages/Auth.jsx)
+#### [MODIFY] [Auth.jsx](file:///e:/ResQAI/src/pages/Auth.jsx)
+- Remove left hero panel entirely — full-width centered layout on parchment background
+- Top: ResQAI wordmark in IBM Plex Serif Bold + thin red `#CC0000` horizontal rule
+- Tagline: "Coordinating relief when it matters most." in serif italic
+- Auth card: white, 480px max, centered with underline tab switcher (Sign In / Register)
+- Login form: email, password, full-width blue submit button
+- Register form: role selector as bordered radio cards (Citizen / NGO / Volunteer) with icons
+- Error: red-bordered inline alert box (already inline — keep pattern)
+- All existing Firebase auth logic unchanged
 
-- Full visual redesign with **split-screen layout**: left side = animated hero/branding, right side = auth form
-- Add **phone number** field for all signups
-- Add **city/location** field for all signups  
-- Add **NGO address**, **contact person** fields for NGO signup
-- Add **availability**, **age** fields for volunteer signup
-- Animated tab switching between Login and Sign Up
-- Proper error display with icons
-- Loading spinner animation on submit
-- The admin signup option is completely hidden — admin can only log in
+#### [MODIFY] [Dashboard.jsx](file:///e:/ResQAI/src/pages/Dashboard.jsx)
+- Apply new class names and inline style updates throughout for humanitarian theme
+- Map tab: two-panel (65%/35%) with incident list using 4px left-strip severity
+- Incident cards: white, left-strip severity, serif card titles, no glows
+- NGO self-assign button: outline blue → optimistic "Assigned" green label
+- Inventory tab: Grid of resource panels with serif headers, amber strip when quantity < 10
+- Assignments tab: full-width cards with severity bars
+- Tasks tab (volunteer): full-width cards with status strips
+- Donate tab: structured form card with serif header, preset amount bordered radio buttons
+- AI Scanner tab (remains from current dashboard — for NGO/admin): keep all logic, restyle card
+- All state, Firebase calls, handlers preserved exactly
 
----
-
-### Dashboard — Complete Rebuild with Tabs
-
-#### [MODIFY] [Dashboard.jsx](file:///f:/ResQAI/src/pages/Dashboard.jsx)
-
-Complete rebuild into a **tabbed dashboard** that adapts based on role:
-
-**Citizen Dashboard Tabs:**
-1. **🗺️ Map** — Interactive map with click-to-report, live incident markers
-2. **📋 My Reports** — History of citizen's own reports
-3. **💰 Donate** — Donation form UI (amount, cause selection)
-4. **🤝 Volunteer** — Option to register as volunteer
-
-**NGO Dashboard Tabs:**
-1. **🗺️ Map** — View all incidents, click to self-assign
-2. **📦 Inventory** — Manage food/clothes/supplies/medical counts with +/- controls
-3. **👥 Volunteers** — View linked volunteers, assign tasks per incident
-4. **📋 Assignments** — View assigned incidents, mark "Situation Under Control"
-5. **💰 Donations** — View donation pool
-
-**Volunteer Dashboard Tabs:**
-1. **🗺️ Map** — View assigned incident locations
-2. **📋 My Tasks** — View assigned tasks, mark complete
-3. **📊 Profile** — View skills, linked NGO
+#### [MODIFY] [AdminDashboard.jsx](file:///e:/ResQAI/src/pages/AdminDashboard.jsx)
+- Apply new class names throughout for humanitarian theme
+- Sidebar (via TabBar): white, 220px, serif wordmark + "ADMIN" red label
+- Overview: 5 stat panels with serif numbers, delta indicators (if available)
+- Incidents: left sidebar list + right detail panel, both with severity strips
+- NGOs tab: card grid with amber border for low-stock NGOs
+- Volunteers tab: grouped by NGO cards
+- AI Scanner: restyled card, purple accent preserved as accent only (not dominant)
+- Map: full-screen with collapsible right panel
+- All Firebase logic unchanged
 
 ---
 
-### Admin Dashboard — Full Rebuild
+### Map
 
-#### [MODIFY] [AdminDashboard.jsx](file:///f:/ResQAI/src/pages/AdminDashboard.jsx)
-
-Complete rebuild with **command center** aesthetic:
-
-**Admin Dashboard Tabs:**
-1. **🗺️ Command Map** — Full incident map with severity heat indicators
-2. **🚨 Incidents** — List all incidents, assign NGOs, view severity progress bar
-3. **🏢 NGOs** — View all NGOs with inventory, volunteer counts, assignment status
-4. **👥 Volunteers** — View all volunteers across all NGOs
-5. **📊 Overview** — Stats cards (total incidents, active, resolved, total NGOs, total volunteers)
-
----
-
-### Map Component — Enhanced
-
-#### [MODIFY] [Map.jsx](file:///f:/ResQAI/src/components/Map.jsx)
-
-- Add **pulsating** animation to high-severity markers
-- Enhanced popups with more info (assigned NGOs count, resolution progress)
-- Cluster support for areas with many incidents
-- Custom map styling (dark-toned tiles from CartoDB for dark mode)
-- "Self-assign" button directly in NGO popup view
-
----
-
-### New Shared Components
-
-#### [NEW] [Navbar.jsx](file:///f:/ResQAI/src/components/Navbar.jsx)
-- Reusable navbar with role badge, notification bell icon, logout
-- Animated notification counter
-
-#### [NEW] [TabBar.jsx](file:///f:/ResQAI/src/components/TabBar.jsx)
-- Reusable horizontal tab navigation with animated active indicator
-- Icon + text tabs
-
-#### [NEW] [StatCard.jsx](file:///f:/ResQAI/src/components/StatCard.jsx)
-- Gradient-bordered card showing a stat number + label + icon
-- Used in Admin overview and NGO inventory
-
-#### [NEW] [Modal.jsx](file:///f:/ResQAI/src/components/Modal.jsx)
-- Reusable modal overlay with blur backdrop, slide-in animation
-- Used for report form, task assignment, donation
-
-#### [NEW] [SeverityBar.jsx](file:///f:/ResQAI/src/components/SeverityBar.jsx)
-- Animated progress bar that changes color based on severity %
-- Shows gradient from red (100%) → green (0%)
-
-#### [NEW] [FloatingAlert.jsx](file:///f:/ResQAI/src/components/FloatingAlert.jsx)
-- Pulsating top banner for severe incident alerts
-- Auto-dismiss with close button
-- Stacks multiple alerts
-
-#### [NEW] [TaskCard.jsx](file:///f:/ResQAI/src/components/TaskCard.jsx)
-- Card showing task description, assigned volunteer, status badge
-- "Mark Complete" button with confirmation
-
-#### [NEW] [DonationForm.jsx](file:///f:/ResQAI/src/components/DonationForm.jsx)
-- Amount selection (preset buttons + custom input)
-- Cause/incident selection dropdown
-- Success confirmation animation (UI only for prototype — no real payment)
-
----
-
-### Firestore Data Helpers
-
-#### [NEW] [firestoreHelpers.js](file:///f:/ResQAI/src/firebase/firestoreHelpers.js)
-
-Centralized Firestore CRUD functions:
-- `createReport(citizenId, disasterType, location, title)` — creates report + merges with nearby incidents
-- `assignNGOToIncident(incidentId, ngoId)` — admin or self-assign
-- `markSituationUnderControl(incidentId, ngoId)` — severity recalculation
-- `assignTaskToVolunteer(ngoId, volunteerId, incidentId, description)` — task creation
-- `markTaskComplete(taskId)` — volunteer marks done
-- `updateNGOInventory(ngoId, inventoryUpdate)` — update resource counts
-- `registerAsVolunteer(citizenUid)` — changes citizen role to volunteer
-- `createDonation(userId, amount, incidentId)` — logs donation
-
----
-
-## Architecture Summary
-
-```
-src/
-├── contexts/
-│   └── AuthContext.jsx          [NEW] Global auth state
-├── firebase/
-│   ├── config.js                [KEEP] Firebase init
-│   └── firestoreHelpers.js      [NEW] All Firestore operations
-├── components/
-│   ├── Map.jsx                  [MODIFY] Enhanced dark map
-│   ├── Navbar.jsx               [NEW] Shared navigation
-│   ├── TabBar.jsx               [NEW] Tab navigation
-│   ├── StatCard.jsx             [NEW] Stats display
-│   ├── Modal.jsx                [NEW] Overlay modal
-│   ├── SeverityBar.jsx          [NEW] Severity progress
-│   ├── FloatingAlert.jsx        [NEW] Alert banner
-│   ├── TaskCard.jsx             [NEW] Task display
-│   └── DonationForm.jsx         [NEW] Donation UI
-├── pages/
-│   ├── Auth.jsx                 [MODIFY] Premium redesign
-│   ├── Dashboard.jsx            [MODIFY] Full tabbed rebuild
-│   └── AdminDashboard.jsx       [MODIFY] Command center rebuild
-├── index.css                    [MODIFY] Complete dark theme
-├── App.jsx                      [MODIFY] Auth context + guards
-└── main.jsx                     [KEEP]
-```
-
----
-
-## Firestore Collections Schema
-
-| Collection | Key Fields | Access |
-|------------|-----------|--------|
-| `users` | `uid, email, role, name, phone, city, ngoId?, inventory?, skills?, linkedNgoId?, createdAt` | Role-based |
-| `incidents` | `title, disasterType, location{lat,lng}, reportCount, severityScore, assignedNGOs[], resolvedNGOs[], createdAt` | All users (read), Citizens (create reports), Admin/NGO (assign) |
-| `reports` | `citizenId, incidentId, disasterType, location, timestamp` | Creator + Admin |
-| `tasks` | `ngoId, volunteerId, incidentId, description, status(pending/in-progress/completed), createdAt` | NGO (create), Volunteer (update), Admin (read) |
-| `donations` | `userId, amount, incidentId?, message?, createdAt` | Creator + Admin |
-
----
-
-## Dynamic Severity Workflow
-
-1. Citizen reports disaster → creates/merges into `incidents` collection
-2. `reportCount` increments → floating alert triggers when > 5 reports
-3. Severity starts at **100%**
-4. Admin assigns NGOs OR NGOs self-assign → added to `assignedNGOs[]`
-5. NGO assigns tasks to volunteers → `tasks` collection
-6. Volunteers mark tasks complete → `status: 'completed'`
-7. NGO marks "Situation Under Control" → added to `resolvedNGOs[]`
-8. **Severity formula**: `Math.max(0, 100 - (resolvedNGOs.length / assignedNGOs.length * 100))`
-9. All users see severity change in real-time via Firestore `onSnapshot`
-10. When severity = 0%, incident shows as resolved (green)
+#### [MODIFY] [Map.jsx](file:///e:/ResQAI/src/components/Map.jsx)
+- Update tile URL to **CartoDB Positron** (`https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png`)
+- Incident markers: square pins (24px) with severity-colored flag
+- Critical pins: slow pulse ring animation
+- Leaflet popup: white card with serif headers, 1px border
 
 ---
 
 ## Verification Plan
 
-### Automated Tests
-- `npm run build` — Verify zero compilation errors
-- `npm run dev` — Start dev server and verify all routes load
+### Visual Verification (Browser)
+1. Open auth page → verify parchment background, serif wordmark, red rule, card layout
+2. Login as citizen → verify blue role strip, sidebar with serif nav, map panel layout
+3. Login as NGO → verify green role strip, inventory panels with amber strips at low qty
+4. Login as volunteer → verify task cards with left-status strips
+5. Login as admin → verify white sidebar with ADMIN label, stat cards with serif numbers
+6. Trigger floating alert → verify full-width parchment strip with red top border
+7. Open report modal → verify white card, serif title, horizontal rule
 
-### Manual Verification (Browser Testing)
-1. **Auth Flow**: Sign up as Citizen, NGO, Volunteer → verify each lands on correct dashboard with correct tabs
-2. **Admin Login**: Login with `resqaiadmin@gmail.com` / `ResQAI123#` → verify admin panel loads
-3. **Report Flow**: As citizen, click map → report incident → verify it appears on all dashboards
-4. **Aggregation**: Report same location twice → verify `reportCount` increments (not duplicate pin)
-5. **NGO Assignment**: As admin, select incident → assign NGO → verify NGO sees it
-6. **Self-Assignment**: As NGO, click incident → self-assign → verify assignment
-7. **Task Assignment**: As NGO, go to Volunteers tab → assign task → verify volunteer sees it
-8. **Task Completion**: As volunteer, mark task done → verify status updates
-9. **Severity Decrease**: As NGO, mark "Situation Under Control" → verify severity % drops for all users
-10. **Floating Alert**: Create 6+ reports at same location → verify pulsating banner appears for all users
-11. **Inventory Management**: As NGO, update food/clothes counts → verify admin sees updated values
-12. **Donation**: As any user, submit donation form → verify confirmation
-13. **Responsive**: Verify the UI works on mobile viewport widths
+### Functional Regression (Must-Pass)
+- Submit citizen report (with photo AI analysis) — must still work
+- NGO self-assign to incident — must still work + optimistic UI green label
+- Admin manual assign NGO — must still work
+- AI scanner (admin) — must still work
+- Mark task complete (volunteer) — must still work
+- Donation form — must still work
+
+### Build Verification
+- `npm run dev` starts without errors
+- No broken imports or missing class names
