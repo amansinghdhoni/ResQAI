@@ -26,7 +26,7 @@ export default function TabBar({ tabs, activeTab, onTabChange }) {
       {/* Sidebar footer accent */}
       <div style={{ padding: '1rem 1.25rem', borderTop: '1px solid var(--border)', marginTop: 'auto' }}>
         <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textAlign: 'center' }}>
-          Powered by AI Intelligence
+          Powered by Team ResQAI
         </div>
       </div>
     </aside>
