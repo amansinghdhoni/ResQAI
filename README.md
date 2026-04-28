@@ -3,7 +3,6 @@
 > **“We’re not building just an app—we’re building an AI-powered decision system that ensures the right help reaches the right place at the right time.”**
 
 
-
 ## 🌍 Overview
 
 **ResQAi** is a unified, AI-driven platform designed to optimize resource allocation during crises such as natural disasters, public health emergencies, and underserved community situations.
@@ -11,7 +10,6 @@
 In many real-world scenarios, **resources exist—but they don’t reach the right people at the right time** due to fragmented data and slow coordination.
 
 ResQAi solves this by combining **real-time data, AI intelligence, and smart matching systems** into one powerful platform.
-
 
 
 ## ❗ Problem
@@ -25,7 +23,6 @@ This leads to:
 - Resource wastage in some areas  
 - Critical shortages in others  
 - Lack of visibility for decision-makers  
-
 
 
 ## 💡 Our Solution
@@ -52,7 +49,6 @@ ResQAi is a **purely software-based intelligent platform** that:
 - Priority scoring for urgent needs  
 
 
-
 ## 🛠️ Tech Stack
 
 - **Frontend:** React.js  
@@ -60,7 +56,6 @@ ResQAi is a **purely software-based intelligent platform** that:
 - **AI/ML:** Machine Learning + NLP models  
 - **Maps:** Google Maps API / OpenStreetMap  
 - **Data Sources:** Public APIs (disaster, health, social signals)  
-
 
 
 ## 🌐 SDG Impact
